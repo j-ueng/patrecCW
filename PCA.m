@@ -1,6 +1,6 @@
 %Pattern Recognition Coursework 1
 %eigenvectors with non zero eigenvalues, M eigenvectors
-function [V_sorted, D_sorted, minDistIdx] = PCA(tr_data, tr_label, M, nR, te_data, te_label, nC)
+function [V_sorted, D_sorted, euDist, minDistIdx] = PCA(tr_data, tr_label, M, nR, te_data, te_label, nC)
 
 %mean image
 im_sum = zeros(size(tr_data,1),1);
@@ -44,6 +44,7 @@ for i=1:size(ind, 1)
     V_sorted(:,i) = V(:,ind(i));
 end
 
+%%
 %application of eigenvectors
 %face image reconstruction while varying M
 im_c = tr_data(:,nR);
@@ -67,6 +68,7 @@ figure(2);
 subplot(1,2,1),image(im);title('Original Image')
 subplot(1,2,2),image(im_r);title(['Reconstructed Image, M = ', num2str(M)])
 
+%%
 %face recognition: Nearest Neighbor Classification
 im_t = te_data(:,nC);
 w_t = [1,M];
@@ -78,10 +80,10 @@ euDist = [1, size(tr_data, 1)];
 for i=1:size(tr_data, 2) % i = image index in training data
     w_n = [];
     for j=1:M %j = eigenvector index in sorted matrix/number of weights
-        w_n(j) = dot(tr_data(:,i),V_sorted(:,j));
+        w_n(j) = dot(tr_data(:,i) - avg_t ,V_sorted(:,j));
     end %completed weights vector for one training image
     %create vector of dists between test image weights and each training image weights
-    euDist(i) = norm(w_t - w_n);             
+    euDist(i) = pdist2(w_t, w_n);             
 end
 [~, minDistIdx] = min(euDist);
 %minDistIdx refers to the index of the 'closest' image match from the training data
