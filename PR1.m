@@ -16,7 +16,8 @@ for i = 1:max(l) %cover all the photos
         nte = nte +1;
         
 end
-[V1, D1] = PCA(tr_data, 100, 208); 
+[V1, D1, minIdx] = PCA(tr_data, tr_label, 50, 208, te_data, te_label, 104); 
+
 %[V2, D2] = PCA2(tr_data, 50, 208);
 
 
