@@ -54,7 +54,7 @@ function [V_sorted, D_sorted, avg_t] = PCA(tr_data, tr_label, M, nR, te_data, te
     for i = 1:20
         eigface = reshape(V_sorted(:,i), [56,46]);
         eigface = imrotate(eigface.', 270);
-        subplot(4,5,i),image(eigface);
+        subplot(4,5,i),imshow(eigface,[]);
     end
 
     figure(3);
