@@ -42,7 +42,10 @@ function [V_sorted, D_sorted] = PCA2(im_data, M, n)
     end
 
     V = A * V0; % eig vec related by ui = A*vi
-    V = V / norm(V);
+    % Nv = sqrt(sum(A.^2, 2)); % column vector norms stored in row vector
+    for i = 1:size(V,2)
+        V(:,i) = V(:,i) / norm(V(:,i));
+    end
     
     V_sorted = [];
     for i=1:size(ind, 1)
