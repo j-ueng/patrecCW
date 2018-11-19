@@ -1,5 +1,5 @@
 %for Question 3
-function [Sb, Sw, rankSb, rankSw, W_lda] = LDA(tr_data, tr_label, W_pca, avg)
+function [Sb, Sw, W_lda] = LDA(tr_data, tr_label, M_pca, W_pca, avg)
 %Scatter matrices
 %creates vector of start indices of each class (from the training data set)
 %indices in tr_label match with indices in tr_data
@@ -50,9 +50,27 @@ for i = 1:classNumTotal
     Sw = Sw + Sw_i;
 end
 
-rankSw = rank(Sw);
-rankSb = rank(Sb);
+rank(Sw)
+rank(Sb)
 
+%calculating W_lda (Fisherfaces)
+W_pca = W_pca(:,1:M_pca);
+[W_lda_unsorted, D] = eig((W_pca.' * Sw * W_pca)*(W_pca.' * Sb * W_pca));
 
+%ordering eigenvalues/eigenvectors in W_lda
+[D_sorted0, ind] = sort(D, 'descend');
+D_sorted = []; 
+for i=1:size(D_sorted0, 1)
+    if D_sorted0(i, 1) ~= 0
+        D_sorted(end + 1, 1) = D_sorted0(i, 1);
+    else
+        break
+    end
+end
+
+W_lda = [];
+for i=1:size(ind, 1)
+    W_lda(:,i) = W_lda_unsorted(:,ind(i));
+end
 
 end
