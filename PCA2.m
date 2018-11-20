@@ -1,6 +1,6 @@
 %Pattern Recognition Coursework 1
 %PCA low dimensional computation
-function [V_sorted, D_sorted] = PCA2(im_data, M, n)
+function [V_sorted, D_sorted, xbar] = PCA2(im_data, M)
 
     %mean image
     im_sum = zeros(size(im_data,1),1);
@@ -12,6 +12,8 @@ function [V_sorted, D_sorted] = PCA2(im_data, M, n)
     %avg = reshape(avg_t, [56,46]);
     %avg = imrotate(avg.',270);
     %figure(4);image(avg);title('Mean Image')
+
+    xbar = avg_t;
 
     tic;
     
@@ -42,7 +44,6 @@ function [V_sorted, D_sorted] = PCA2(im_data, M, n)
     end
 
     V = A * V0; % eig vec related by ui = A*vi
-    % Nv = sqrt(sum(A.^2, 2)); % column vector norms stored in row vector
     for i = 1:size(V,2)
         V(:,i) = V(:,i) / norm(V(:,i));
     end
