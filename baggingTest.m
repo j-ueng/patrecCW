@@ -32,7 +32,7 @@ class_final = majorityVote(class)
 if te_label(1,n) == class_final
     disp('success');
 else
-    disp('fail');
+    disp('failure');
 end
 
 end
