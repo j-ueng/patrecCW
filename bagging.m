@@ -1,4 +1,4 @@
-function [classifiers, averages] = bagging(tr_data, tr_label, nBags, nElements, M_pca, M_lda)
+function [classifiers, averages, dataBags, dataBagLabels] = bagging(tr_data, tr_label, nBags, nElements, M_pca, M_lda)
 %1. Generate bootstrap replicates
 
 %nBags: number of bags to generate
@@ -9,6 +9,8 @@ function [classifiers, averages] = bagging(tr_data, tr_label, nBags, nElements, 
 
 classifiers = cell(nBags, 1);
 averages = cell(nBags, 1);
+dataBags = cell(nBags, 1);
+dataBagLabels = cell(nBags, 1);
 
 for i = 1:nBags
     bag = randi(size(tr_data, 2), nElements, 1); 
@@ -17,17 +19,19 @@ for i = 1:nBags
     %randi samples with replacement
     
     dataBag = zeros(size(tr_data,1), nElements);
-    dataBagLabels = zeros(1, nElements); %these two are cleared and reset each loop
+    dataBagLabel = zeros(1, nElements); %these two are cleared and reset each loop
     
     %fill matrices with sampled images/class labels to use for training 
     for j = 1:nElements
         dataBag(:,j) = tr_data(:,bag(j));
-        dataBagLabels(j) = tr_label(1, bag(j));
+        dataBagLabel(j) = tr_label(1, bag(j));
     end
+    dataBags{i} = dataBag;
+    dataBagLabels{i} = dataBagLabel;
     
 %2. Train PCA-LDA classifier and store W_lda in classifiers for each bag
-    [W_pca, avg] = PCA(dataBag, dataBagLabels, M_pca);   
-    [W_lda] = LDA(dataBag, dataBagLabels, M_pca, W_pca, avg, M_lda);
+    [W_pca, avg] = PCA(dataBag, dataBagLabel, M_pca);   
+    [W_lda] = LDA(dataBag, dataBagLabel, M_pca, W_pca, avg, M_lda);
     classifiers{i} = W_lda;
     averages{i} = avg;
 end
