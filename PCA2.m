@@ -14,8 +14,6 @@ function [V_sorted, D_sorted, xbar] = PCA2(im_data, M)
     %figure(4);image(avg);title('Mean Image')
 
     xbar = avg_t;
-
-    tic;
     
     %eigenvalue & eigenvector matrices
     for i = 1:size(im_data, 2)
@@ -52,7 +50,5 @@ function [V_sorted, D_sorted, xbar] = PCA2(im_data, M)
     for i=1:size(ind, 1)
         V_sorted(:,i) = V(:,ind(i));
     end
-    
-    toc;
     
 end
