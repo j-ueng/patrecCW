@@ -7,6 +7,8 @@ function [acc_rate,fail_idx] = altRecog(testd, testl, traind, trainl, M)
     fail_num = 0;
     fail_idx = [];
 
+    tic;
+
     for i = 1:size(testd,2)
         img_q = testd(:,i);
 
@@ -33,6 +35,8 @@ function [acc_rate,fail_idx] = altRecog(testd, testl, traind, trainl, M)
             fail_idx(:,fail_num) = [testl(i); recogIdx];
         end
     end
+
+    toc;
 
     % compute accuracy rate
     acc_rate = succ_num / (succ_num + fail_num);
