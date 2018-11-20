@@ -1,6 +1,23 @@
 %for Question 3
-function [Sb, Sw, W_lda] = LDA(tr_data, tr_label, M_pca, W_pca, avg)
+function [W_lda] = LDA(tr_data_uS, tr_label_uS, M_pca, W_pca, avg)
 %Scatter matrices
+
+%when using a randomly sampled subspace, must sort data/labels first
+[tr_label0, ind1] = sort(tr_label_uS);
+tr_label = []; 
+for i=1:size(tr_label0, 2)
+    if tr_label0(1, i) ~= 0
+        tr_label(end + 1) = tr_label0(1, i);
+    else
+        break
+    end
+end
+
+tr_data = [];
+for i=1:size(ind1,2)
+    tr_data(:,i) = tr_data_uS(:,ind1(i));
+end
+
 %creates vector of start indices of each class (from the training data set)
 %indices in tr_label match with indices in tr_data
 startIdx = [];
@@ -50,15 +67,24 @@ for i = 1:classNumTotal
     Sw = Sw + Sw_i;
 end
 
-rank(Sw)
-rank(Sb)
+%rank(Sw);
+%rank(Sb);
 
 %calculating W_lda (Fisherfaces)
 W_pca = W_pca(:,1:M_pca);
-[W_lda_unsorted, D] = eig((W_pca.' * Sw * W_pca)*(W_pca.' * Sb * W_pca));
+[W_lda_unsorted, D0] = eig((W_pca.' * Sw * W_pca)*(W_pca.' * Sb * W_pca));
 
 %ordering eigenvalues/eigenvectors in W_lda
-[D_sorted0, ind] = sort(D, 'descend');
+D = zeros(size(D0,2), 1); %store eigenvalues in a col vector
+for i=1:size(D0,2)
+    for j=1:size(D0,1)
+        if i==j
+            D(i) = D0(i, j);
+        end
+    end
+end
+
+[D_sorted0, ind2] = sort(D, 'descend');
 D_sorted = []; 
 for i=1:size(D_sorted0, 1)
     if D_sorted0(i, 1) ~= 0
@@ -69,8 +95,9 @@ for i=1:size(D_sorted0, 1)
 end
 
 W_lda = [];
-for i=1:size(ind, 1)
-    W_lda(:,i) = W_lda_unsorted(:,ind(i));
+for i=1:size(ind2, 1)
+    W_lda(:,i) = W_lda_unsorted(:,ind2(i));
 end
+%W_lda = W_lda(:,1:M_lda);
 
 end
