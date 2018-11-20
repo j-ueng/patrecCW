@@ -8,19 +8,18 @@ function [acc_rate,fail_idx] = altRecog(testd, testl, traind, trainl)
     fail_idx = [];
 
     for i = 1:size(testd,2)
-        % choose query image (test needs to be done on the entire test set)
         img_q = testd(:,i);
 
         tempdata = zeros(size(traind,1),8); % 8 datapoints per class
         euDist = [1, max(trainl)];
-        for i = 1:max(trainl)
+        for k = 1:max(trainl)
             % learn principal subspace for class i
-            tempdata = traind(:,(8*i-7):(8*i));
-            [V, D, xbar] = PCA2(tempdata,3);
+            tempdata = traind(:,(8*k-7):(8*k));
+            [V, D, xbar] = PCA2(tempdata,7);
 
             % reconstruct query image and compute reconstruction error
-            face = faceRecon2(img_q, xbar, V, 3);
-            euDist(i) = norm(face - img_q);
+            face = faceRecon2(img_q, xbar, V, 7);
+            euDist(k) = norm(face - img_q);
         end
 
         [~, recogIdx] = min(euDist); % recogIdx = identity of the closest image
