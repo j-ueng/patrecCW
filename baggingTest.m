@@ -1,11 +1,11 @@
-function [minDist_final] = baggingTest(tr_data, tr_label, nBags, nElements, M_pca, M_lda, te_data, te_label, n, C)
+function [minDist_final] = baggingTest(tr_data, tr_label, nBags, nElements, M_pca, M_lda, te_data, te_label, n)
 
 [classifiers, averages] = bagging(tr_data, tr_label, nBags, nElements, M_pca, M_lda);
 
 im_t = te_data(:,n);
 size(im_t)
 w_t = [1,M_lda];
-minDistAll = zeros(nBags);
+minIdxAll = zeros(nBags);
 
 for i=1:nBags
     W_lda = classifiers{i};
@@ -23,14 +23,15 @@ for i=1:nBags
         %create vector of dists between test image weights and each training image weights
         euDist(j) = pdist2(w_t, w_n);
     end
-    minDist= min(euDist);
-    minDistAll(i) = minDist;
+    [~, minDistIdx] = min(euDist);
+    minIdxAll(i) = minDistIdx;
 end
 
-if C == 1
-    minDist_final = sum(minDistAll)/nBags;
-elseif C == 2
-    minDist_final = majorityVote(minDistAll);
+minIdx_final = majorityVote(minIdxAll);
+if te_label(1,n) == minIdx_final
+    disp('success')
+else
+    disp('failure')
 end
 
 end
