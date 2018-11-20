@@ -24,6 +24,6 @@ end
 M = [10 25 50 100 200];
 % faces = zeros(size(tr_data,1), 5);
 faces = faceReconst(xbar, X(:,208), V2, M);
-[euDist, minIdx] = NNRecog(tr_data, tr_label, 100, te_data, te_label, 104, V2, xbar);
-[altAcc, altFail] = altRecog(te_data, te_label, tr_data, tr_label);
-%[NNAcc, NNFail] = NNRecog();
+%[euDist, minIdx] = NNRecog(tr_data, tr_label, 100, te_data, te_label, 104, V2, xbar);
+[altAcc, altFail] = altRecog(te_data, te_label, tr_data, tr_label, 5);
+[NNAcc, NNFail] = NNRecog(tr_data, tr_label, 50, te_data, te_label, V2, xbar);
