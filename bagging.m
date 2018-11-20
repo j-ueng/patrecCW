@@ -1,4 +1,4 @@
-function [classifiers, W_pca] = bagging(tr_data, tr_label, nBags, nElements, M_pca)
+function [classifiers] = bagging(tr_data, tr_label, nBags, nElements, M_pca)
 %1. Generate bootstrap replicates
 
 %nBags: number of bags to generate
