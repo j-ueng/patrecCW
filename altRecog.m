@@ -1,4 +1,4 @@
-function [acc_rate,fail_idx] = altRecog(testd, testl, traind, trainl)
+function [acc_rate,fail_idx] = altRecog(testd, testl, traind, trainl, M)
 
     % face recognition: reconstruction error
 
@@ -15,10 +15,10 @@ function [acc_rate,fail_idx] = altRecog(testd, testl, traind, trainl)
         for k = 1:max(trainl)
             % learn principal subspace for class i
             tempdata = traind(:,(8*k-7):(8*k));
-            [V, D, xbar] = PCA2(tempdata,7);
+            [V, D, xbar] = PCA2(tempdata,M);
 
             % reconstruct query image and compute reconstruction error
-            face = faceRecon2(img_q, xbar, V, 7);
+            face = faceRecon2(img_q, xbar, V, M);
             euDist(k) = norm(face - img_q);
         end
 
