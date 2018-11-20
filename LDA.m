@@ -1,5 +1,5 @@
 %for Question 3
-function [W_lda] = LDA(tr_data_uS, tr_label_uS, M_pca, W_pca, avg)
+function [W_lda] = LDA(tr_data_uS, tr_label_uS, M_pca, W_pca, avg, M_lda)
 %Scatter matrices
 
 %when using a randomly sampled subspace, must sort data/labels first
@@ -52,8 +52,12 @@ for i = 1:classNumTotal
     end
     num_class(i) = num_im;
     mu_class(:,i) = sum_c./num_im;
+%     
+%     disp_im = reshape(mu_class(:,i), [56,46]);
+%     disp_im = imrotate(disp_im.',270); 
+%     figure(1);subplot(1,classNumTotal,i),image(disp_im);
+
     Sb = Sb + (mu_class(:,i) - avg)*(mu_class(:,i) - avg).';
- 
 end
 
 %create the Within scatter matrix Sw
@@ -72,7 +76,7 @@ end
 
 %calculating W_lda (Fisherfaces)
 W_pca = W_pca(:,1:M_pca);
-[W_lda_unsorted, D0] = eig((W_pca.' * Sw * W_pca)*(W_pca.' * Sb * W_pca));
+[V0, D0] = eig(inv(W_pca.' * Sw * W_pca)*(W_pca.' * Sb * W_pca));
 
 %ordering eigenvalues/eigenvectors in W_lda
 D = zeros(size(D0,2), 1); %store eigenvalues in a col vector
@@ -94,10 +98,13 @@ for i=1:size(D_sorted0, 1)
     end
 end
 
+
+
 W_lda = [];
 for i=1:size(ind2, 1)
-    W_lda(:,i) = W_lda_unsorted(:,ind2(i));
+    W_lda(:,i) = V0(:,ind2(i));
 end
-%W_lda = W_lda(:,1:M_lda);
+W_lda = W_pca*W_lda;
+W_lda = W_lda(:,1:M_lda);
 
 end
