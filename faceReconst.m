@@ -1,9 +1,10 @@
-function faces = faceReconst(xbar, xn, u, M)
+function [faces, rError] = faceReconst(xbar, xn, u, M)
 
     im = reshape(xn, [56,46]);
     im = imrotate(im.',270); 
 
     faces = zeros(size(xn,1), 5);
+    rError= [];
     
     for k = 1:size(M,2)
         w_r = [1,M(k)];
@@ -15,6 +16,7 @@ function faces = faceReconst(xbar, xn, u, M)
         end
 
         faces(:,k) = xbar + sum;
+        rError(k) = norm(xn - faces(:,k));
     end
 
     %display original and reconstructed
