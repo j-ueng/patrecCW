@@ -1,4 +1,4 @@
-function [minDist_avg] = baggingTest(tr_data, tr_label, nBags, nElements, M_pca, M_lda, te_data, te_label, n)
+function [minDist_final] = baggingTest(tr_data, tr_label, nBags, nElements, M_pca, M_lda, te_data, te_label, n, C)
 
 [classifiers, averages] = bagging(tr_data, tr_label, nBags, nElements, M_pca, M_lda);
 
@@ -27,6 +27,10 @@ for i=1:nBags
     minDistAll(i) = minDist;
 end
 
-minDist_avg = sum(minDistAll)/nBags;
+if C == 1
+    minDist_final = sum(minDistAll)/nBags;
+elseif C == 2
+    minDist_final = majorityVote(minDistAll);
+end
 
 end
