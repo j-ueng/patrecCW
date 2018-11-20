@@ -1,37 +1,38 @@
-function [minDist_final] = baggingTest(tr_data, tr_label, nBags, nElements, M_pca, M_lda, te_data, te_label, n)
+function [classifiers, averages, dataBagLabels] = baggingTest(tr_data, tr_label, nBags, nElements, M_pca, M_lda, te_data, te_label, n)
 
-[classifiers, averages] = bagging(tr_data, tr_label, nBags, nElements, M_pca, M_lda);
+[classifiers, averages, dataBags, dataBagLabels] = bagging(tr_data, tr_label, nBags, nElements, M_pca, M_lda);
 
 im_t = te_data(:,n);
-size(im_t)
-w_t = [1,M_lda];
-minIdxAll = zeros(nBags);
+w_t = zeros(1,M_lda);
+class = zeros(1, nBags);
 
 for i=1:nBags
     W_lda = classifiers{i};
     avg = averages{i};
-    for j=1:M_lda
+    for j=1:M_lda %weights for the subtracted mean vector for the test im against every fisherface eigenvector
         w_t(j) = dot((im_t - avg),W_lda(:,j));
     end
 
-    euDist = zeros(1, size(tr_data, 1));
-    for j=1:size(tr_data, 2) % i = image index in training data
-        w_n = [];
-        for k=1:M %j = eigenvector index in sorted matrix/number of weights
-            w_n(k) = dot(tr_data(:,j) - avg, W_lda(:,k));
+    bag = dataBags{i};
+    label = dataBagLabels{i};
+    euDist = zeros(1, nElements);
+    for j=1:nElements % i = image index in training data (dataBag)
+        w_n = zeros(1, M_lda);
+        for k=1:M_lda %j = eigenvector index in sorted matrix/number of weights
+            w_n(k) = dot(bag(:,j) - avg, W_lda(:,k));
         end %completed weights vector for one training image
         %create vector of dists between test image weights and each training image weights
-        euDist(j) = pdist2(w_t, w_n);
+       
+        euDist(j) = pdist2(w_t, w_n); %distance between test weights and weights of each training image stored here
     end
     [~, minDistIdx] = min(euDist);
-    minIdxAll(i) = minDistIdx;
+    class(i) = label(minDistIdx);
 end
-
-minIdx_final = majorityVote(minIdxAll);
-if te_label(1,n) == minIdx_final
-    disp('success')
+class_final = majorityVote(class)
+if te_label(1,n) == class_final
+    disp('success');
 else
-    disp('failure')
+    disp('fail');
 end
 
 end
