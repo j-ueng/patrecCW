@@ -8,28 +8,27 @@
 %anywhere within the ranklist
 %use Euclidean distance
 
+success = zeros(1, 3);
+i = 1;
 
-k_max = 10;
-success = zeros(1, k_max);
-
-for k = 1:k_max
-    for q = 1:1400
+for n = 1:length(gallery_idx)
+    gallery(n, :) = features(n, :);
+end
+ 
+for k = [1, 5, 10]
+    for q = 1:300
         query = features(query_idx(q),:);
-        for n = 1:length(gallery_idx)
-            gallery(n, :) = features(n, :);
-        end
-
         ranklist = knnsearch(gallery, query, 'K', k, 'Distance', 'euclidean');
         query_label = labels(query_idx(q));
     
         for n = 1:length(ranklist)
             gallery_label = labels(ranklist(n));
             if gallery_label == query_label 
-                success(k) = success(k) + 1;
+                success(1,i) = success(1,i) + 1;
                 break
             end
         end
     end
+    i = i + 1;
 end
-
-scores = success/length(query_idx);
+% scores = success/length(query_idx);
