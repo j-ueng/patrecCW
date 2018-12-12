@@ -1,4 +1,4 @@
-q = 600;
+q = 60;
 k = 5;
 query = features(query_idx(q),:);
 m = 1;
@@ -39,11 +39,15 @@ end
 
 %display query image / images in ranklist
 figure(1);
-imtitle = string(filelist(query_idx(q)));
-subplot(1,k + 1,1), imshow(imtitle); 
+imtitle = char(filelist(query_idx(q)));
+im_q = imread(imtitle);
+im_q = imresize(im_q, [323, 155]);
+subplot(1,k + 1,1), imshow(im_q); 
 
 %display images in ranklist
 for i = 1:k
-    imtitle = string(filelist(ranklist(i)));
-    subplot(1, k + 1, i + 1), imshow(imtitle);
+    imtitle = char(filelist(ranklist(i)));
+    im_g = imread(imtitle);
+    im_g = imresize(im_g, [323, 155]);
+    subplot(1, k + 1, i + 1), imshow(im_g);
 end
