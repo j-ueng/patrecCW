@@ -1,12 +1,7 @@
 %load('cuhk03_new_protocol_config_labeled.mat');
 %features = jsondecode(fileread('feature_data.json'));
 
-%improved knn classification using LMNN
-%1. create and train with vaildation set to choose mu
-%2. delete images/vector of considered ID with the same camID
-%3. calculate error score for ranklist (successful if correct ID is
-%anywhere within the ranklist
-%use Euclidean distance
+% validation to determine optimal maximum iteration
 
 % create validation set
 train_label = labels(train_idx);
@@ -24,8 +19,6 @@ end
 val_label = labels(val_idx);
 val_feat = features(val_idx, :);
 %val_feat = val_feat.';
-
-% validation to find optimal maximum iteration
 
 val_succ = zeros(1, 6);
 query_used = 100;
